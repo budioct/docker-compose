@@ -1,0 +1,50 @@
+version: "3.9"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+  mongodb-example:
+    image: mongo:latest
+    container_name: mongodb-example
+    # short syntax, string port HOST:CONTAINER
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: budhi
+      MONGO_INITDB_ROOT_PASSWORD: budhi
+      MONGO_INITDB_DATABASE: admin
+    networks:
+      - network_example
+
+  mongodb-express-example:
+    image: mongo-express:latest
+    container_name: mongodb-express-example
+    # restart
+    # no: default nya tidak pernah restart
+    # always: selalu restart jika container berhenti, tapi jika di hentikan manual, dia akan restart ketiak pertama kali docker restart
+    # on-failure: restart jika container error dengan indikasi error ketika exit
+    # unless-stopped: selalu restart container, kecuali ketika dihentikan manual
+    restart: always
+    # short syntax, string port HOST:CONTAINER
+    ports:
+      - "8081:8081"
+   # env mongodb-express-example yang akan connect ke env mongodb-example
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: budhi
+      ME_CONFIG_MONGODB_ADMINPASSWORD: budhi
+      ME_CONFIG_MONGODB_SERVER: mongodb-example
+    networks:
+      - network_example
+    # depends_on membuat urutan menjalankan Container
+    # Kita bisa sebutkan pada Container, bahwa Container ini hanya bisa berjalan, kalo Container yang lain sudah berjalan
+    # Kita bisa sebutkan satu atau lebih Container lainnya pada attribute depends_on
+    depends_on:
+      - mongodb-example
+
+# networks di buat manual,
+# name: nama
+# network, driver: bridge(host dan deamon/container terhubung), host(hanya host), dan none(keduanya tidak terhubung)
+networks:
+  network_example:
+    name: network_example
+    driver: bridge

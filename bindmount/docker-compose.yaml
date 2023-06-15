@@ -1,0 +1,46 @@
+version: "3.9"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+  mongodb1:
+    image: mongo:latest
+    container_name: mongodb1
+    # short syntax, string port HOST:CONTAINER
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: budhi
+      MONGO_INITDB_ROOT_PASSWORD: budhi
+      MONGO_INITDB_DATABASE: admin
+
+    # Bind Mount compuse dengan attribure (volumes)
+    # lokasi boleh relative path atau absolute path
+    # short syntax -->
+    # source: lokasi host.
+    # target: lokasi container.
+    # mode  : ro(readonly). rw(read write)
+    volumes:
+      - "./data-mongo1:/data/db"
+
+  mongodb2:
+    image: mongo:latest
+    container_name: mongodb2
+    # short syntax, string port HOST:CONTAINER
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: budhi
+      MONGO_INITDB_ROOT_PASSWORD: budhi
+      MONGO_INITDB_DATABASE: admin
+
+    # long syntax (nested object)-->
+    # type: mounth, volume, bind.
+    # source: sumber path di host atau di volume.
+    # target: target path di container.
+    # read_only: flag readonly atau tidak. default nya false
+    volumes:
+      - type: bind
+        source: "./data-mongo2"
+        target: "/data/db"
+        read_only: false

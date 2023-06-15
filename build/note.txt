@@ -1,0 +1,15 @@
+Build Dockerfile
+● Ketika kita menggunakan perintah docker compose start, secara otomatis Docker Compose akan
+  melakukan build terlebih dahulu jika Image nya belum terbuat
+● Tapi jika kita hanya ingin melakukan build Image saja, tanpa membuat Container, kita juga bisa
+  menggunakan perintah : docker compose build
+
+Menghapus Image
+● Hasil Image dari Docker Compose tidak akan dihapus ketika melakukan perintah docker image down
+● Jadi untuk menghapusnya kita harus hapus manual menggunakan perintah docker image rm nama-image:tag
+
+Build Ulang
+● Perlu diingat, ketika kita mengubah kode program, lalu kita coba stop dan start ulang container
+   menggunakan Docker Compose, bukan berarti kode program terbaru akan berjalan
+● Hal ini karena Image versi baru otomatis terbuat, sehingga jika kita kita ingin menggunakan Image
+  versi baru, kita harus hapus dulu Container nya, lalu buat ulang dengan Image baru

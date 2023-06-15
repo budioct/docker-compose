@@ -1,0 +1,15 @@
+version: "3.9"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+
+  #  ini adalah example nginx
+  nginx-example:
+    image: nginx:latest
+    container_name: nginx-example
+
+  #  ini adalah example nginx
+  mongo-example:
+    image: mongo:latest
+    container_name: mongo-example

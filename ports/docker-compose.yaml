@@ -1,0 +1,19 @@
+version: "3.9"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+  nginx-port1:
+    image: nginx:latest
+    container_name: nginx-port1
+    # long syntax, protocol (tcp atau udp), published (port host), target(port deamon/container)
+    ports:
+      - protocol: tcp
+        published: 8080
+        target: 80
+  nginx-port2:
+    image: nginx:latest
+    container_name: nginx-port2
+    # short syntax, string port HOST:CONTAINER
+    ports:
+      - "8081:80"

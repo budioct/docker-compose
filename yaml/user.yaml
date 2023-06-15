@@ -1,0 +1,22 @@
+# penulisan petik 2 itu opsional ("")
+# key:value object
+firstName: budhi
+middleName: octaviansyah
+lastName: oct
+# array
+hobbies:
+  - Coding
+  - Football
+  - Eating
+  - Sleeping
+# nested object
+address:
+    street: Jl. maju mundur KM 24
+    city: gotham
+    country: Amerina
+# array didalamnya ada object
+wallet:
+  - type: cast
+    amount: 100000
+  - type: debit
+    amount: 200000

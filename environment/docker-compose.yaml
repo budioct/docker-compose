@@ -1,0 +1,15 @@
+version: "3.9"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+  mongodb-example:
+    image: mongo:latest
+    container_name: mongodb-example
+    # short syntax, string port HOST:CONTAINER
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: budhi
+      MONGO_INITDB_ROOT_PASSWORD: budhi
+      MONGO_INITDB_DATABASE: admin

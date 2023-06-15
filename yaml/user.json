@@ -1,0 +1,26 @@
+{
+  "firstName": "budhi",
+  "middleName": "octaviansyah",
+  "lastName": "oct",
+  "hobbies": [
+    "Coding",
+    "Football",
+    "Eating",
+    "Sleeping"
+  ],
+  "address": {
+    "street": "Jl. maju mundur KM 24",
+    "city": "gotham",
+    "country": "Amerina"
+  },
+  "wallet": [
+    {
+      "type": "cast",
+      "amount": 100000
+    },
+    {
+      "type": "debit",
+      "amount": 200000
+    }
+  ]
+}

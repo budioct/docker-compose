@@ -1,0 +1,25 @@
+version: "3.8"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+  app:
+    container_name: app
+    # attribute build bisa kita gunakan untuk membuat image sendiri
+    # context   : berisi path ke file Dockerfile
+    # dockerfile: nama file Dockerfile, bisa diganti jika mau
+    # args      : argument yang dibutuhkan ketika melakukan docker build
+    build:
+      context: "./app"
+      dockerfile: Dockerfile
+    # nama image yang kita build seperti di bawah name:tag(version)
+    image: "app-golang:1.0.2"
+    # env kita ikuti seperti di env di file Dockerfile
+    environment:
+      - "APP_PORT=8080"
+      - "MODE=local"
+    # long syntax, protocol (tcp atau udp), published (port host), target(port deamon/container)
+    ports:
+      - protocol: tcp
+        published: 8080
+        target: 8080

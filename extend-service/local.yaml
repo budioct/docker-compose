@@ -1,0 +1,9 @@
+version: "3.8"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+  app:
+    # env kita ikuti seperti di env di file Dockerfile
+    environment:
+      - "MODE=local"

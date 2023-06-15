@@ -1,0 +1,11 @@
+version: "3.8"
+
+# services daftar container yang akan dibuat docker-compose
+# key nya boleh apa saja tetapi unique
+services:
+  nginx-example:
+    image: nginx:latest
+    container_name: nginx-example
+  nginx-example2:
+    image: nginx:latest
+    container_name: nginx-example2
