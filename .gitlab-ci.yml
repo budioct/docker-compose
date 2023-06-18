@@ -1,0 +1,98 @@
+stages:
+  - build
+  - deploy
+
+# nama jobs (jalan di stage)
+# jika job ini berhasil maka dia akan ada artifact/project
+compile-dan-test:
+  # menyediakan environment untuk project java build tools
+  image: maven:3.3-jdk-8
+  stage: build
+  services:
+    - mysql:5.7
+  variables:
+    # Configure mysql environment variables mysql
+    MYSQL_ROOT_PASSWORD: cobacoba
+    MYSQL_DATABASE: namadb
+    MYSQL_USER: configuser
+    MYSQL_PASSWORD: configpassword
+    # kenapa tidak localhost malahan mysql. ini karena kita menggunakan image services mysql:5.7, dengan konfigurasi variable env
+    SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bukutamudb?serverTimezone=UTC
+    # MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+  # script menjalankan command instruksi yang kita mau.. contoh adalah commad maven untuk compile dan build package
+  script: mvn clean package
+  # artifacts untuk mengambil hasil akhir file .jar dari build maven
+  artifacts:
+    paths:
+      - target/*.jar
+
+deploy-ke-server-testing:
+  stage: deploy
+  # image unutk aplikasi yang sudah di package
+  image: debian:latest
+  # before_script supaya tidak kena autentikasi, supat tidak kena gap
+  # supaya login ssh tidak menggunakan password kita harus membuatkan ssh key
+  # command: ssh-keygen -f gitlab enter enter
+  # nanti ada file hasil ssh-keygen, gitlab(private key) dan gitlab.pub(public key). yang akan kita upload ke server kita
+  # upload ke vm server, scp gitlab.pub root@178.128.11.198:/root/
+  # nah di server kita lihat apakah file nya sudah di upload. command: ls -l, nah sekarang set key public nya di vm server . command: cat gitlab.pub >> .ssh/authorized keys
+  # sekarang daftarkan private key copy isi file nya
+  # sekarang kita ke Gitlab repository. ke Settings>Variables>Collapse kita buat Type: variable, Key: SSH_PRIVATE_KEY, Value: hasil copy private key yang di dalam file gitlab. klik Save variables
+  # sekarang kita ke Gitlab repository. ke Settings>Variables>Collapse kita buat Type: variable, Key: SSH_HOSTNAME_PRODUCTION, Value: 178.128.11.198 {ip VPS}. klik Save variables
+  # hasil dari Variable tadi bisa kita reaver menjadi ssh-add <(echo "$SSH_PRIVATE_KEY")
+  # hasil dari Variable tadi bisa kita reaver menjadi '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME_PRODUCTION" > ~/.ssh/known_hosts'
+
+  # supaya tidak error kita perlu menambahkan lagi satu script di vm server
+  # kita buat folder: mkdir /var/lib/bukutamu/
+  # vim /var/lib/bukutamu/deploy.sh (nanti dia akan membuka sebuah file). untuk insert/modifikasi file klik tombol I.. code nya seperti di bawah
+#  !/bin/bash
+#
+#  if [[ $# -eq 0 ]] ; then
+#  echo 'Cara pakai: deploy.sh <namafile.jar>'
+#  exit 1
+#  fi
+# echo $1 > /var/lib/bukutamu/deploy.txt
+
+  # jika sudah selesai simpan
+  # lakukan instruksi: chmod +x /var/lib/bukutamu/deploy.sh
+  # cd var/lib/bukutamu/
+  # ls -l
+  # users# deploy.sh
+  # #kita coba jalankan
+  # ./deploy.sh test-123
+  # ls -l
+  # users# deploy.sh
+
+  before_script:
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        - eval $(ssh-agent -s)
+        - ssh-add <(echo "$SSH_PRIVATE_KEY")
+        - mkdir -p ~/.ssh
+        #- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME_PRODUCTION" > ~/.ssh/known_hosts'
+        #- scp target/*.jar root@$SSH_HOSTNAME_PRODUCTION:/var/lib/$CI_PROJECT_NAME/
+        #- ssh root@$SSH_HOSTNAME_PRODUCTION /var/lib/$CI_PROJECT_NAME/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
+  script:
+    - scp target/*.jar root@178.128.11.198{IPVPS}:/var/lib/bukutamu/$CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
+    # - ssh root@178.128.11.198 /var/lib/bukutamu/deploy.sh
+    - ssh root@$SSH_HOSTNAME_PRODUCTION /var/lib/bukutamu/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
+
+deploy-ke-server-production:
+  stage: deploy
+  only:
+    - /-RELEASE$/
+  # image unutk aplikasi yang sudah di package
+  image: debian:latest
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    #- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME_PRODUCTION" > ~/.ssh/known_hosts'
+    #- scp target/*.jar root@$SSH_HOSTNAME_PRODUCTION:/var/lib/$CI_PROJECT_NAME/
+    #- ssh root@$SSH_HOSTNAME_PRODUCTION /var/lib/$CI_PROJECT_NAME/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
+  script:
+    - scp target/*.jar root@178.128.11.198{IPVPS}:/var/lib/bukutamu-production/$CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
+    # - ssh root@178.128.11.198 /var/lib/bukutamu/deploy.sh
+    - ssh root@$SSH_HOSTNAME_PRODUCTION /var/lib/bukutamu-production/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar

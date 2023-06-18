@@ -1,0 +1,37 @@
+Gitlab server
+kita punya file .gitlab-ci.yml
+di dalamnya ada command (intruksi yang kita mau)
+* compile
+* test
+* upload
+
+Runner
+di dalamnya ada Executor untuk membuild project kita
+
+Docker Host
+
+
+- Gitlab server akan memberi JOB ke Runner Executro,
+- yang nantinya akan meng-trigger file .gitlab-ci.yml
+- Runner bash shell nantinya akan git-colone Gitlab server kita lalu dia akan cd (masuk ke dalam project) Git lab server, dan menjalankan commad file .gitlab-ci.yml
+  -kekurangan bash sheel, tidak bersih atar job. project 1 dan project 2 kalau nama db sama dia akan    tertimpa tidak di buat yang baru
+  -jika user 1 melakukan commit dan user 2 juga melakukan commit dalam waktu berdekatan maka itu        akan bisa datanya terturkar2 karna jalanya parallel
+- Runner bash docker
+- Runner bash docker-machine, di dalamnya ada (auto scale), 
+  jadi kalau ada build yang masuk di Runner dia akan ngantri, maka dari itu kita perlu docker host  (pihak ke tiga) sesuai konfigurasi dan menghubungi provider google-cloud, AWS, digital ocean
+  Runner begitu ada jobs yang masuk dia bikin VPS jalaninin setelah selesai begitu selesai di destroy   VPS nya
+- Runner Virtual box, sama parallel
+
+bentuk script di dalam .gitlab-ci.yml
+
+push file .gitlab-ci.yml gitlab repository
+
+# kita masuk ke project gitlab repository kita
+ke CI / CD
+     Pipelines
+
+# jika rangkayan build gitlab-ci.yml selesai. langkah berikutnya adalah deployment ke server
+kita akan upload file nya ke VPS server
+nantinya ada IP nya
+
+ 
